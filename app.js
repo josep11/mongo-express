@@ -23,7 +23,7 @@ var winston = require('winston'),
     ]
   });
 
-var config = require('./config');
+var config = require('./config-cloud9');
 
 //Set up swig
 app.engine('html', cons.swig);
@@ -67,12 +67,9 @@ var dbOptions = {
 };
 var db = new mongodb.Db('local', new mongodb.Server(host, port, dbOptions), {safe:true});
 
-
-
-
 winston.info('Hello again distributed logs');
-utils.writeFile(db);
-process.exit();
+//utils.writeFile(db);
+//process.exit();
 //mongodb://admin:filos@oceanic.mongohq.com:10096/uprise
 
 
@@ -333,9 +330,15 @@ app.post(config.site.baseUrl+'db/:database', middleware, routes.addCollection);
 
 app.get(config.site.baseUrl+'db/:database', middleware, routes.viewDatabase);
 
-//run as standalone App?
+process.env.PORT = config.site.port || 80;
+//process.env.IP = "127.0.0.1";
+
+//console.log(process.env.PORT);
+//console.log(process.env.IP);
+
 if (require.main === module){
-  app.listen(config.site.port);
+  // app.listen(config.site.port);
+  app.listen(process.env.PORT); //process.env.IP);
   console.log("Mongo Express server listening on port " + (config.site.port || 80));
 }else{
   //as a module
